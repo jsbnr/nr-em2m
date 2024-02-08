@@ -3,7 +3,7 @@
 # em2m - Events & Metrics to Metrics Processor
 This lightweight tool can be used to convert both events or metrics (derived from an NRQL query) into dimensional metrics. When run on a regular schedule it can perform continous data transalation.
 
-** Important: In most cases the built in platform [Events to Metrics](https://docs.newrelic.com/docs/data-apis/convert-to-metrics/analyze-monitor-data-trends-metrics/) capability should be preferred to perform these operations, particularly at scale. The capability has some limitations that this tool provides solutions for. **
+**Important: In most cases the built in platform [Events to Metrics](https://docs.newrelic.com/docs/data-apis/convert-to-metrics/analyze-monitor-data-trends-metrics/) capability should be preferred to perform these operations, particularly at scale. The capability has some limitations that this tool provides solutions for.**
 
 ## What it does
 You define a number of tasks to be processed. Each task provides an NRQL query that gathers data from NRDB (data at rest) at a specified resolution. The data is gathered and re-ingested as a dimensional metric.
