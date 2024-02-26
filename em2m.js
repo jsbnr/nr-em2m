@@ -10,13 +10,13 @@ let QUERY_KEY="NRAK-..."          // User API Key (Please provide with secure cr
 const TASKS = [
 {
     "id":"example1",            // a unique ID for this task
-    "metricName":"example1cpu",    // Name of the metric, this will be prefixed with the namespace "em2m."
+    "metricName":"example1cpu", // Name of the metric, this will be prefixed with the namespace "em2m."
     "offsetFromNowBuffer": 5,   // minutes - data fresher than this will be ignored (and picked up in next run)
     "rehydrateLookback": 60,    // minutes - If never run or last run not found, how far to go back an retrieve data (max 48hrs)
     "accountId":"1234567",      // Account ID to gather data from
     "bucketSize": 60,           // The size of bucket in seconds. e.g. 60 = 1 minute, data will be aggregated in 1 minute blocks.
     "selector":["max","min","records","percentile.95","average","processorCount"],  // The fields from the query (below) to record as metrics. 
-    "query":`FROM SystemSample select max(cpuPercent) as max, max(cpuPercent) as min, count(*) as records, percentile(cpuPercent,95) as percentile, average(cpuPercent) as average, average(numeric(processorCount)) as processorCount  where cpuPercent is not null facet hostname, entityGuid`,
+    "query":`FROM SystemSample select max(cpuPercent) as max, min(cpuPercent) as min, count(*) as records, percentile(cpuPercent,95) as percentile, average(cpuPercent) as average, average(numeric(processorCount)) as processorCount  where cpuPercent is not null facet hostname, entityGuid`,
 }]
 
 
@@ -178,6 +178,26 @@ const processTimeseriesData = (data,selector,metricName) => {
     // console.log(facets);
 
     let metricResults=[];
+
+    //support for multiple selectors
+    let selectorArray=[];
+    if(Array.isArray(selector)) {
+        selectorArray=selector;
+    } else {
+        selectorArray=[selector];
+    }
+
+    //check the selectors all exist
+    selectorArray=selectorArray.filter((slct)=>{
+        let value = _.get(results[0],slct);
+        if(value === undefined) {
+            console.log(`Warning: the selector '${slct}' does not appear to exist as a column in the result set. Check your task configuration. Skipping.`);
+            return false;
+        } else {
+            return true;
+        }
+    });
+
     if(results) {
         results.forEach((result)=>{
 
@@ -191,26 +211,23 @@ const processTimeseriesData = (data,selector,metricName) => {
                     } 
                 });
             }
-            //support for multiple selectors
-            let selectorArray=[];
-            if(Array.isArray(selector)) {
-                selectorArray=selector;
-            } else {
-                selectorArray=[selector]
-            }
 
             selectorArray.forEach((slct)=>{
-                metricResults.push({
-                    name: `${NAMESPACE}.${metricName}.${slct}`,
-                    type: "gauge",
-                    value: _.get(result,slct),
-                    timestamp: result.beginTimeSeconds,
-                    attributes: facetsObject
-                })
-            })
-             
-
+                let value = _.get(results[0],slct);
+                if(value === undefined ) {
+                    console.log(`Warning: value for field '${slct}' undefined, skiping`);
+                } else {
+                    metricResults.push({
+                        name: `${NAMESPACE}.${metricName}.${slct}`,
+                        type: "gauge",
+                        value:value,
+                        timestamp: result.beginTimeSeconds,
+                        attributes: facetsObject
+                    })
+                 }
+            });
         })
+
         return metricResults;
 
     } else {
