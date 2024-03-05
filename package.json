@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "cat ./src/head.js > em2m-prod.js && uglifyjs --compress --mangle -- ./src/main.js  >> em2m-prod.js",
-    "add": "git add ./em2m-prod.js",
-    "echo": "echo Build: em2m-prod.js.js created!"
+    "build": "cat ./src/head.js > em2m-src.js && cat ./src/main.js >> em2m-src.js  && cat ./src/head.js > em2m.js && uglifyjs --compress --mangle -- ./src/main.js  >> em2m.js",
+    "add": "git add ./em2m.js && git add ./em2m-src.js ",
+    "echo": "echo Build: uglified em2m.js created."
   },
   "pre-commit": [
     "build",

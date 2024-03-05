@@ -1,17 +1,19 @@
-// Essential Configuration ------------------------------------------------------------
-const NEWRELIC_DC = "US";        // datacenter for account - US or EU
-const SRC_ACCOUNT_ID = "1234567"    //Account ID of account tosource data from
-const SRC_QUERY_KEY = "NRAK-..."    // User API Key for reading data (Please provide with secure credential if possible.)
-const DEST_INSERT_KEY="...FNRAL"    // Ingest API Key for sending data (Please provide with secure credential if possible.) //e.g. $secure.YOU_CREDENTIAL_NAME
+// em2m  - Events & Metrics to Metrics Processor
+// Find documentation here: https://github.com/newrelic-experimental/nr-em2m
 
-// Configure these values only if your destination account is different to that in which data is sourced.
-const DEST_ACCOUNT_ID = SRC_ACCOUNT_ID;  // Account ID to record data back to
+// Essential Configuration ------------------------------------------------------------
+const NEWRELIC_DC = "US";           // datacenter for account - US or EU
+const SRC_QUERY_KEY = "NRAK-..."    // User API Key for reading data from source account(s) (Please provide with secure credential if possible.)
+const DEST_INSERT_KEY="...FNRAL"    // Ingest API Key for sending data (Please provide with secure credential if possible.) //e.g. $secure.YOU_CREDENTIAL_NAME
+const DEST_ACCOUNT_ID = "1234567"   // Account ID of account to send data to
+
+// Configure this value only if your destination account is different to that in which data is sourced AND requires a different user key (user keys may access more than one account)
 const DEST_QUERY_KEY = SRC_QUERY_KEY;    // User API Key of the destination account.
 
 
 
 // Optional Configuration ------------------------------------------------------------
-const MONITOR_NAME="EM2M " ;    // the monitor name, only really relevant if deploying more than monitor
+const MONITOR_NAME="EM2M" ;    // the monitor name, only really relevant if deploying more than monitor
 const DEFAULT_TIMEOUT = 15000   // default timeout for queries, in ms
 const NAMESPACE ="em2m"         // metric names are prefixed with this
 const DEFAULT_REHYDRATE_LOOKBACK= 125;      // minutes to rehydrate from if no pre-existing data
@@ -24,6 +26,7 @@ const GRAPHQL_ENDPOINT = NEWRELIC_DC === "EU" ? "api.eu.newrelic.com" : "api.new
 
 
 // Task configuration -------------------------------------------------------------
+// Add as many tasks as you require here, refer to the documentation for details.
 const TASKS = [
 {
     "id":"example1",            // a unique ID for this task
