@@ -3,13 +3,26 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "cat ./src/preamble-uglified.js > em2m.js && cat ./src/head.js >> em2m.js && uglifyjs --compress --mangle -- ./src/main.js  >> em2m.js",
+    "buildsrc": "cat ./src/preamble-src.js > em2m-src.js && cat ./src/head.js >> em2m-src.js && cat ./src/main.js >> em2m-src.js",
+    "add": "git add ./em2m.js && git add ./em2m-src.js ",
+    "echo": "echo Build: uglified em2m.js created."
   },
+  "pre-commit": [
+    "build",
+    "buildsrc",
+    "add",
+    "echo"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "request": "2.88.2",
-    "lodash": "4.17.21"
+    "lodash": "4.17.21",
+    "request": "2.88.2"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "pre-commit": "^1.2.2",
+    "uglify-js": "^3.17.4"
+  }
 }
