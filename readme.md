@@ -39,17 +39,18 @@ If you run this tool via a synthetic monitor then you may consider configuring a
 Beware of running the tool on data that has yet to settle, the task configuration allows for a buffer to be supplied.
 
 ## Installation and setup
-You can run the script on your own VM, in a synthetic monitor or locally on your machine (for testing)
+You can run the script on your own VM, in a synthetic monitor or locally on your machine (for testing). 
 
 ### Synthetic Monitor Deployment 
 Copy the content of [em2m.js](./em2m.js) into a New Relic API monitor. Set the values as required at the top of the script. Details on task settings can be found below.
 
-Set the monitor name and ID as approriate for the monitor you have set the script up in. You could use any ID and name you like too, this only really matters if you;re running more than one instance in an account.
-
-You will need to specify two API keys, one a user key api and one ingest insert key. These are to query and inject the data respectively. We recommend that you store these in the secure credential store.
+You will need to specify at least two API keys, these are to query and inject the data respectively. We recommend that you store these in the secure credential store.
+ - a user key api
+ - an ingest api key one ingest insert key.
+ - optionally: an additional user key for destination data lookup if required by your permissions and if you're sending data to a different account from where you read.
 
 ### Running locally mode
-You can run and test on your local machine. With nodejs installed run `npm install` to install dependencies. Then edit the file em2m.js file accordingly (adding your own API keys where approriate in the local config section and setting up your tasks manually). Run the sript with `node em2m.js` 
+You can run and test on your local machine. With nodejs installed run `npm install` to install dependencies. Then edit the file em2m.js file accordingly (adding your own API keys where approriate in the local config section and setting up your tasks manually). Run the script with `node em2m.js` 
 
 ## Task configuration
 You configure tasks through the TASKS object. 
@@ -88,6 +89,9 @@ For instance in the example above, the max value could be queried as follows:
 ```
 SELECT max(em2m.example1cpu.max) FROM Metric SINCE 1 hour AGO TIMESERIES
 ```
+
+## Building the project
+The project includes a pre-commit hook that generates a compressed/uglified em2m.js file and a raw em2m-src.js file form the /src folder. Use the em2m-src.js if you need to debug the code.
 
 ## Support
 

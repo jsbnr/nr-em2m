@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "cat ./src/head.js > em2m-src.js && cat ./src/main.js >> em2m-src.js  && cat ./src/head.js > em2m.js && uglifyjs --compress --mangle -- ./src/main.js  >> em2m.js",
+    "build": "cat ./src/preamble-uglified.js > em2m.js && cat ./src/head.js >> em2m.js && uglifyjs --compress --mangle -- ./src/main.js  >> em2m.js",
+    "buildsrc": "cat ./src/preamble-src.js > em2m-src.js && cat ./src/head.js >> em2m-src.js",
     "add": "git add ./em2m.js && git add ./em2m-src.js ",
     "echo": "echo Build: uglified em2m.js created."
   },
   "pre-commit": [
     "build",
+    "buildsrc",
     "add",
     "echo"
   ],

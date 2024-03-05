@@ -1,6 +1,5 @@
 // em2m  - Events & Metrics to Metrics Processor
-// Find documentation here: https://github.com/newrelic-experimental/nr-em2m
-
+// Find documentation here and uncompressed version here: https://github.com/newrelic-experimental/nr-em2m
 // Essential Configuration ------------------------------------------------------------
 const NEWRELIC_DC = "US";           // datacenter for account - US or EU
 const SRC_QUERY_KEY = "NRAK-..."    // User API Key for reading data from source account(s) (Please provide with secure credential if possible.)
