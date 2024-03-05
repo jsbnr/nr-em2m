@@ -1,12 +1,14 @@
-
 const NEWRELIC_DC = "US";        // datacenter for account - US or EU
-const ACCOUNT_ID = "1234567";    // Account ID (required if ingesting events)
+const SRC_ACCOUNT_ID = "1234567"    //Account ID of account tosource data from
+const SRC_QUERY_KEY = "NRAK-..."    // User API Key for reading data (Please provide with secure credential if possible.)
+const DEST_INSERT_KEY="...FNRAL"    // Ingest API Key for sending data (Please provide with secure credential if possible.) //e.g. $secure.YOU_CREDENTIAL_NAME
 
-let INSERT_KEY="...FNRAL"         // Ingest API Key (Please provide with secure credential if possible.) //e.g. $secure.YOU_CREDENTIAL_NAME
-let QUERY_KEY="NRAK-..."          // User API Key (Please provide with secure credential if possible.)
+// Configure these values only if your destination account is different to that in which data is sourced.
+const DEST_ACCOUNT_ID = SRC_ACCOUNT_ID;  // Account ID to record data back to
+const DEST_QUERY_KEY = SRC_QUERY_KEY;    // User API Key of the destination account.
 
-// Task configuration
 
+// Task(s) configuration
 const TASKS = [
 {
     "id":"example1",            // a unique ID for this task
@@ -32,6 +34,7 @@ const MAX_METRICS_PER_SEND_BATCH=2000       // how many metrics to send to new r
 const INGEST_METRIC_ENDPOINT = NEWRELIC_DC === "EU" ? "metric-api.eu.newrelic.com" : "metric-api.newrelic.com" 
 const GRAPHQL_ENDPOINT = NEWRELIC_DC === "EU" ? "api.eu.newrelic.com" : "api.newrelic.com" 
 
+// End of fcofniguration -------------------------------------------------------------
 
 let assert = require('assert');
 let _ = require("lodash");
@@ -151,7 +154,7 @@ const sendDataToNewRelic = async (data) =>  {
         url: `https://${INGEST_METRIC_ENDPOINT}/metric/v1`,
         method: 'POST',
         headers :{
-            "Api-Key": INSERT_KEY
+            "Api-Key": DEST_INSERT_KEY
         },
         body: JSON.stringify(data)
     }
@@ -267,7 +270,7 @@ const JSONParseGraphQLResponse = (data) => {
 }
 
 // Send NRQL query to NR
-const queryNRQL = async (accountId,query) => {
+const queryNRQL = async (accountId,apiKey,query) => {
     const graphQLQuery=`{
         actor {
           account(id: ${accountId}) {
@@ -286,7 +289,7 @@ const queryNRQL = async (accountId,query) => {
         method: 'POST',
         headers :{
             "Content-Type": "application/json",
-            "API-Key": QUERY_KEY
+            "API-Key": apiKey
         },
         body: JSON.stringify({ "query": graphQLQuery})
     };
@@ -310,7 +313,7 @@ const getLastRunTimestamps = async (tasks) => {
     });
     
     const query=`select latest(timestamp) as latestTimestamp from Metric RAW since 48 hours ago facet ${NAMESPACE}.task.Id as 'taskId' where ${NAMESPACE}.task.Id in (${metricTaskIds.toString()}) limit max`;
-    const response = await queryNRQL(ACCOUNT_ID,query, "Gather last run by task");
+    const response = await queryNRQL(DEST_ACCOUNT_ID,DEST_QUERY_KEY,query, "Gather last run by task");
     const results=response?.data?.actor?.account?.nrql?.results;
 
     tasks.forEach(task=>{
@@ -363,7 +366,7 @@ const processTaskQueries = async (task) =>{
     await asyncForEach(task.queries, async (query,idx) => {
         try {
             console.log(`Querying batch ${idx+1}/${task.queries.length} ...  ${formatDateFromUnix(query.sinceTime)} until ${formatDateFromUnix(query.untilTime)}`);
-            const result = await queryNRQL(task.accountId,query.query);
+            const result = await queryNRQL(task.accountId,SRC_QUERY_KEY,query.query);
             const metricData = await processTimeseriesData(result?.data?.actor?.account, task.selector, task.metricName);
             combinedMetricData=[...combinedMetricData, ...metricData];
         } catch (e) {
