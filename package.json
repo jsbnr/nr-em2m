@@ -7,6 +7,11 @@
     "add": "git add ./em2m-prod.js",
     "echo": "echo Build: em2m-prod.js.js created!"
   },
+  "pre-commit": [
+    "build",
+    "add",
+    "echo"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
