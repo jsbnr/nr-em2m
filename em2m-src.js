@@ -5,7 +5,7 @@
 const NEWRELIC_DC = "US";           // datacenter for account - US or EU
 const SRC_QUERY_KEY = "NRAK-..."    // User API Key for reading data from source account(s) (Please provide with secure credential if possible.)
 const DEST_INSERT_KEY="...FNRAL"    // Ingest API Key for sending data (Please provide with secure credential if possible.) //e.g. $secure.YOU_CREDENTIAL_NAME
-const DEST_ACCOUNT_ID = "1234567"   // Account ID of account to send data to
+const DEST_ACCOUNT_ID = "12345678"   // Account ID of account to send data to
 
 // Configure this value only if your destination account is different to that in which data is sourced AND requires a different user key (user keys may access more than one account)
 const DEST_QUERY_KEY = SRC_QUERY_KEY;    // User API Key of the destination account.
