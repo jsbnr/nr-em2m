@@ -3,13 +3,19 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "cat ./src/head.js > em2m-prod.js && uglifyjs --compress --mangle -- ./src/main.js  >> em2m-prod.js",
+    "add": "git add ./em2m-prod.js",
+    "echo": "echo Build: em2m-prod.js.js created!"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "request": "2.88.2",
-    "lodash": "4.17.21"
+    "lodash": "4.17.21",
+    "request": "2.88.2"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "pre-commit": "^1.2.2",
+    "uglify-js": "^3.17.4"
+  }
 }
